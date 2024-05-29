@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { CompaniesService } from './companies.service';
-import { User } from 'src/decorator/customize';
+import { ResponseMessage, User } from 'src/decorator/customize';
 import { IUser } from 'src/users/users.interface';
+import { UpdateCompanyDto } from './dto/update-company.dto';
 
 
 @Controller('companies')
@@ -10,8 +11,35 @@ export class CompaniesController {
   constructor(private readonly companiesService: CompaniesService) { }
 
   @Post()
+  @ResponseMessage("create company")
   create(@Body() createCompanyDto: CreateCompanyDto, @User() user: IUser) {
-    console.log(">>> check info", user);
-    return this.companiesService.create(createCompanyDto);
+    return this.companiesService.create(createCompanyDto, user);
+  }
+
+  @Get()
+  @ResponseMessage("fetch list company with paginate")
+  findAll(
+    @Query("current") currentPage: string, //const currentPage: string = req.query.page;
+    @Query("pageSize") limit: string,
+    @Query() qs: string,
+  ) {
+    return this.companiesService.findAll(+currentPage, +limit, qs);
+  }
+
+  @Patch(':id')
+  update(
+    @Param('id') id: string,
+    @Body() updateCompanyDto: UpdateCompanyDto,
+    @User() user: IUser
+  ) {
+    return this.companiesService.update(id, updateCompanyDto, user);
+  }
+
+  @Delete(':id')
+  remove(
+    @Param('id') id: string,
+    @User() user: IUser
+  ) {
+    return this.companiesService.remove(id, user);
   }
 }
