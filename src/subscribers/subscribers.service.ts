@@ -24,7 +24,7 @@ export class SubscribersService {
       throw new BadRequestException(`Email: ${email} đã tồn tại!`)
     }
 
-    const newSubs = await this.subscriberModel.create({
+    let newSubs = await this.subscriberModel.create({
       name, email, skills,
       createdBy: {
         _id: user._id,
@@ -73,21 +73,21 @@ export class SubscribersService {
     return await this.subscriberModel.findOne({ _id: id })
   }
 
-  async update(id: string, updateSubscriberDto: UpdateSubscriberDto, user: IUser) {
-    if (!mongoose.Types.ObjectId.isValid(id))
-      throw new BadRequestException("not found Subscriber to find")
-
+  async update(updateSubscriberDto: UpdateSubscriberDto, user: IUser) {
     const updated = await this.subscriberModel.updateOne(
-      { _id: id },
+      { email: user.email },
       {
-        ...UpdateSubscriberDto,
+        ...updateSubscriberDto,
         updatedBy: {
           _id: user._id,
           email: user.email
-        },
-      });
+        }
+      },
+      { upsert: true }
+    );
     return updated;
   }
+
 
   async remove(_id: string, user: IUser) {
     if (!mongoose.Types.ObjectId.isValid(_id))
@@ -104,6 +104,11 @@ export class SubscribersService {
     return this.subscriberModel.softDelete({
       _id
     });
+  }
+
+  async getSkills(user: IUser) {
+    const { email } = user;
+    return await this.subscriberModel.findOne({ email }, { skills: 1 });
   }
 }
 
