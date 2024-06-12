@@ -17,17 +17,18 @@ export class AuthController {
         private rolesService: RolesService
     ) { }
     @Public()
-    @ResponseMessage("User Login")
     @UseGuards(LocalAuthGuard)
     @UseGuards(ThrottlerGuard)
     @Throttle(3, 60)
     @ApiBody({ type: UserLoginDto, })
     @Post('/login')
+    @ResponseMessage("User Login")
     handleLogin(
         @Req() req,
-        @Res({ passthrough: true }) response: Response) { //gan cookie
+        @Res({ passthrough: true }) response: Response) {
         return this.authService.login(req.user, response);
     }
+
 
     @Public()
     @ResponseMessage("Register a new user")
