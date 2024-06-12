@@ -6,7 +6,10 @@ import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import { Subscriber, SubscriberDocument } from 'src/subscribers/schemas/subscriber.schemas';
 import { Job, JobDocument } from 'src/jobs/schemas/job.schemas';
 import { InjectModel } from '@nestjs/mongoose';
+import { Cron, CronExpression } from '@nestjs/schedule';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('mail')
 @Controller('mail')
 export class MailController {
   constructor(private readonly mailService: MailService,
@@ -24,6 +27,7 @@ export class MailController {
   @Get()
   @Public()
   @ResponseMessage("Test email")
+  @Cron("0 0 0 * * 0") // 0.00 every sunday
   async handleTestEmail() {
     // const jobs = [
     //   {
