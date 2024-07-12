@@ -19,9 +19,6 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
             context.getHandler(),
             context.getClass(),
         ]);
-
-        //khi banj set public = true, nó sẽ không chạy cái handleREquest bên duois, cũng như nó ko chạy vào jwt.strategy.ts
-        //=> không có user trong request => @user = undefined
         if (isPublic) {
             return true;
         }
