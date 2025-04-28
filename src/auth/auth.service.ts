@@ -48,7 +48,7 @@ export class AuthService {
 
         const refresh_token = this.createRefreshToken(payload);
 
-        //update user with refresh token
+        //update user with refresh token lưu vào database
         await this.usersService.updateUserToken(refresh_token, _id);
 
         //set refresh_token as cookies
